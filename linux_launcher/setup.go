@@ -28,6 +28,7 @@ func makeLauncher(launcherName, fileName, iconName string) {
 	appdir := filepath.Dir(exe1)
 	appname := filepath.Join(appdir, fileName)
 	home, _ := os.UserHomeDir()
+	os.MkdirAll(filepath.Join(home, ".local", "share", "applications"), os.ModePerm)
 	dst := filepath.Join(home, ".local", "share", "applications", launcherName+".desktop")
 	iconSrc := filepath.Join(appdir, iconName)
 

@@ -28,12 +28,13 @@ msgstr "帮助"
 
 msgid ""
 "Copy Right: Fu Huizhong <fuhuizn@163.com>\n"
-"Security Diary Tool.\n"
-"Crypto with AES256"
+"Security Diary "
 msgstr ""
 "版权所有：Fu Huizhong <fuhuizn@163.com>\n"
-"安全日记本\n"
-"使用256位AES加密算法"
+"安全日记本 "
+
+msgid "Crypto with AES256"
+msgstr "使用256位AES加密算法"
 
 msgid "About"
 msgstr "关于"
@@ -65,8 +66,8 @@ msgstr "新密码"
 msgid "New"
 msgstr "新建"
 
-msgid "Backup"
-msgstr "备份"
+msgid "Backup & Delete"
+msgstr "备份和删除"
 
 msgid "Register"
 msgstr "注册"
@@ -258,8 +259,11 @@ msgstr "清除本行格式"
 msgid "Save File"
 msgstr "保存文件"
 
-msgid "-- Selected Attachments --"
-msgstr "-- 选择附件 --"
+msgid "Select Attachments"
+msgstr "选择附件"
+
+msgid "Total"
+msgstr "总数"
 
 msgid "Export As..."
 msgstr "导出"
@@ -294,11 +298,164 @@ msgstr "搜索结果"
 msgid "Support Author"
 msgstr "支持作者"
 
-msgid "You can backup the directory yourself."
-msgstr "你可以自行备份该目录。"
+msgid "You can backup and delete the directory yourself."
+msgstr "你可以自行备份或删除该目录。"
 
 msgid "Pay Voluntary!"
 msgstr "支付多少全凭自愿！"
 
 msgid "Confirm Delete"
 msgstr "确认删除"
+
+msgid "Import All"
+msgstr "导入备份"
+
+msgid "Export All"
+msgstr "备份全部"
+
+msgid "Select export directory"
+msgstr "选择导出目录"
+
+msgid "Select a bakup file"
+msgstr "选择备份文件"
+
+msgid "Text Replace"
+msgstr "文本替换"
+
+msgid "Text Search"
+msgstr "文本搜索"
+
+msgid "Last"
+msgstr "上一个"
+
+msgid "Next"
+msgstr "下一个"
+
+msgid "All"
+msgstr "全部"
+
+msgid "Words to search."
+msgstr "查找文字"
+
+msgid "Old Text."
+msgstr "旧文字"
+
+msgid "New Text."
+msgstr "新文字"
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "Replace"
+msgstr "替换"
+
+msgid "Paste Text"
+msgstr "粘帖纯文本"
+
+msgid "Rename Category"
+msgstr "重命名类别"
+
+msgid "New Category Name"
+msgstr "新的类别名称"
+
+msgid "Error"
+msgstr "错误"
+
+msgid "Are you sure? All files in this category will move to default category."
+msgstr "是否确定？本类别的所有文件将转移到默认类别中。"
+
+msgid "New Category"
+msgstr "新建类别"
+
+msgid "Remove Category"
+msgstr "删除类别"
+
+msgid "Default"
+msgstr "默认"
+
+msgid "Category"
+msgstr "分类"
+
+msgid "Categories"
+msgstr "分类"
+
+msgid "Can not remove default category."
+msgstr "不能删除默认类别"
+
+msgid "Change Category"
+msgstr "修改类别"
+
+msgid "Select a category"
+msgstr "选择一个分类"
+
+msgid "Add To Menu"
+msgstr "加入启动菜单"
+
+msgid "You can start this program from 'Start'->'Office'"
+msgstr "你现在可以从 '开始'->'办公' 启动本程序"
+
+msgid "Increase Ident"
+msgstr "增加缩进量"
+
+msgid "Decrease Ident"
+msgstr "减少缩进量"
+
+msgid "Scale Image"
+msgstr "缩放图片"
+
+msgid "Scale Image Size"
+msgstr "缩放图片尺寸"
+
+msgid "Width"
+msgstr "宽"
+
+msgid "Height"
+msgstr "高"
+
+msgid "Refresh"
+msgstr "刷新"
+
+msgid "Top Margin"
+msgstr "段前间距"
+
+msgid "Format Brush"
+msgstr "格式刷"
+
+msgid "Create Desktop Shortcut"
+msgstr "创建桌面快捷方式"
+
+msgid "Export Odt..."
+msgstr "导出为Odt格式..."
+
+msgid "Update"
+msgstr "检查更新"
+
+msgid "This is the Newest Version!"
+msgstr "这是最新版本！"
+
+msgid "Current:"
+msgstr "当前版本："
+
+msgid "Newest:"
+msgstr "最新版本："
+
+msgid "I will open the page on github website after you click button 'OK'!"
+msgstr "当你点击'OK'按钮后，我将打开位于github网站上的下载页面！"
+
+msgid "Change Storage Dir"
+msgstr "改变存储目录"
+
+msgid "Select Storage Directory"
+msgstr "选择存储目录"
+
+msgid "Quit program"
+msgstr "即将退出程序"
+
+msgid "The program will terminate now."
+msgstr "本程序即将退出。"
+
+msgid "How to move data?"
+msgstr "如何转移你的数据？"
+
+msgid "Move the directories to the new directory from "
+msgstr "把该目录中的子目录移动到新的数据目录："

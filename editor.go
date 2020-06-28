@@ -17,6 +17,7 @@ import (
 
 func (s *myWindow) setHeader(level int) {
 	var cfmt = gui.NewQTextCharFormat()
+	cfmt.SetFont2(s.app.Font())
 	switch level {
 	case 1:
 		cfmt.SetFontPointSize(18)
@@ -34,6 +35,7 @@ func (s *myWindow) setHeader(level int) {
 
 func (s *myWindow) setStandard() {
 	var cfmt = gui.NewQTextCharFormat()
+	cfmt.SetFont2(s.app.Font())
 	cfmt.SetFontPointSize(14)
 	cfmt.SetForeground(gui.NewQBrush3(gui.NewQColor2(core.Qt__black), core.Qt__SolidPattern))
 
@@ -114,6 +116,34 @@ func (s *myWindow) textStyle(styleIndex int) {
 		bfmt.SetObjectIndex(-1)
 		cursor.SetBlockFormat(bfmt)
 	}
+}
+
+// addIndent 增加缩进量，n=1（增加1） or n=-1（减少1）
+func (s *myWindow) addIndent(n int) {
+	cursor := s.editor.TextCursor()
+	cursor.BeginEditBlock()
+
+	var (
+		blockFmt = cursor.BlockFormat()
+		listFmt  = gui.NewQTextListFormat()
+	)
+
+	if cursor.CurrentList().Pointer() != nil {
+		listFmt = gui.NewQTextListFormatFromPointer(cursor.CurrentList().Format().Pointer())
+		if listFmt.Indent()+n >= 0 {
+			listFmt.SetIndent(listFmt.Indent() + n)
+			cursor.CreateList(listFmt)
+		}
+
+	} else {
+		if blockFmt.Indent()+n >= 0 {
+			blockFmt.SetIndent(blockFmt.Indent() + n)
+			cursor.SetBlockFormat(blockFmt)
+		}
+
+	}
+
+	cursor.EndEditBlock()
 }
 
 func (s *myWindow) textColor() {
@@ -201,13 +231,14 @@ func (s *myWindow) insertImage() {
 }
 
 func (s *myWindow) scaleImage(src *gui.QImage) (res *gui.QImage) {
+
 	dlg := widgets.NewQDialog(s.window, core.Qt__Dialog)
 	dlg.SetWindowTitle(T("Scale Image Size"))
 
-	grid := widgets.NewQGridLayout(dlg)
+	grid := newGridLayout(dlg)
 
-	width := widgets.NewQLabel2(strconv.Itoa(src.Width())+" =>", dlg, core.Qt__Widget)
-	grid.AddWidget(width, 0, 0, 0)
+	width := widgets.NewQLabel2(fmt.Sprintf("%s : %d =>", T("Width"), src.Width()), dlg, core.Qt__Widget)
+	grid.AddWidget2(width, 0, 0, 0)
 	scaledW := src.Width()
 	scaledH := src.Height()
 	delta := 30
@@ -223,24 +254,24 @@ func (s *myWindow) scaleImage(src *gui.QImage) (res *gui.QImage) {
 	widthInput := widgets.NewQLineEdit(dlg)
 	widthInput.SetText(strconv.Itoa(scaledW))
 	widthInput.SetValidator(wValidor)
-	grid.AddWidget(widthInput, 0, 1, 0)
+	grid.AddWidget2(widthInput, 0, 1, 0)
 
-	height := widgets.NewQLabel2(strconv.Itoa(src.Height())+" =>", dlg, core.Qt__Widget)
+	height := widgets.NewQLabel2(fmt.Sprintf("%s : %d =>", T("Height"), src.Height()), dlg, core.Qt__Widget)
 
-	grid.AddWidget(height, 1, 0, 0)
+	grid.AddWidget2(height, 1, 0, 0)
 
 	heightInput := widgets.NewQLineEdit(dlg)
 	heightInput.SetText(strconv.Itoa(scaledH))
 	heightInput.SetValidator(hValidor)
-	grid.AddWidget(heightInput, 1, 1, 0)
+	grid.AddWidget2(heightInput, 1, 1, 0)
 
-	btb := widgets.NewQGridLayout(nil)
+	btb := newGridLayout2()
 
 	okBtn := widgets.NewQPushButton2(T("OK"), dlg)
-	btb.AddWidget(okBtn, 0, 0, 0)
+	btb.AddWidget2(okBtn, 0, 0, 0)
 
 	cancelBtn := widgets.NewQPushButton2(T("Cancel"), dlg)
-	btb.AddWidget(cancelBtn, 0, 1, 0)
+	btb.AddWidget2(cancelBtn, 0, 1, 0)
 
 	grid.AddLayout2(btb, 2, 0, 1, 2, 0)
 
@@ -288,6 +319,9 @@ func (s *myWindow) scaleImage(src *gui.QImage) (res *gui.QImage) {
 	})
 
 	dlg.Exec()
+	if res == nil {
+		res = src
+	}
 	return
 }
 
@@ -323,33 +357,34 @@ func (s *myWindow) getImageList(html string) []string {
 func (s *myWindow) insertTable() {
 	dlg := widgets.NewQDialog(s.window, core.Qt__Dialog)
 	dlg.SetWindowTitle(T("Table Rows and Columns"))
+	dlg.SetFixedWidth(s.charWidth() * 13)
 
-	grid := widgets.NewQGridLayout(dlg)
+	grid := newGridLayout(dlg)
 
 	row := widgets.NewQLabel2(T("Rows:"), dlg, core.Qt__Widget)
-	grid.AddWidget(row, 0, 0, 0)
+	grid.AddWidget2(row, 0, 0, 0)
 
 	rowInput := widgets.NewQLineEdit(dlg)
 	rowInput.SetText("3")
 	rowInput.SetValidator(gui.NewQIntValidator(dlg))
-	grid.AddWidget(rowInput, 0, 1, 0)
+	grid.AddWidget2(rowInput, 0, 1, 0)
 
 	col := widgets.NewQLabel2(T("Columns:"), dlg, core.Qt__Widget)
 
-	grid.AddWidget(col, 1, 0, 0)
+	grid.AddWidget2(col, 1, 0, 0)
 
 	colInput := widgets.NewQLineEdit(dlg)
 	colInput.SetText("3")
 	colInput.SetValidator(gui.NewQIntValidator(dlg))
-	grid.AddWidget(colInput, 1, 1, 0)
+	grid.AddWidget2(colInput, 1, 1, 0)
 
-	btb := widgets.NewQGridLayout(nil)
+	btb := newGridLayout2()
 
 	okBtn := widgets.NewQPushButton2(T("OK"), dlg)
-	btb.AddWidget(okBtn, 0, 0, 0)
+	btb.AddWidget2(okBtn, 0, 0, 0)
 
 	cancelBtn := widgets.NewQPushButton2(T("Cancel"), dlg)
-	btb.AddWidget(cancelBtn, 0, 1, 0)
+	btb.AddWidget2(cancelBtn, 0, 1, 0)
 
 	grid.AddLayout2(btb, 2, 0, 1, 2, 0)
 
@@ -367,6 +402,10 @@ func (s *myWindow) insertTable() {
 		}
 		tbl := cursor.InsertTable2(r, c)
 		tbl.Format().SetBorderBrush(gui.NewQBrush2(core.Qt__SolidPattern))
+		A := 'A'
+		for i := 0; i < c; i++ {
+			tbl.CellAt(0, i).FirstCursorPosition().InsertText(fmt.Sprintf(" %c ", A+rune(i)))
+		}
 		dlg.Hide()
 		dlg.Destroy(true, true)
 	})
@@ -475,11 +514,28 @@ func (s *myWindow) clearFormatAtCursor() {
 func OpenDiaryNewWindow(parent *myWindow, id int) *myWindow {
 	win := new(myWindow)
 	win.OpenNewWindow(parent, id)
+	parent.LockEditor()
 	return win
+}
+
+func (s *myWindow) charWidth() int {
+	// font := gui.NewQFont()
+	// font.SetFamily("Serif")
+	// if runtime.GOOS == "windows" {
+	// 	font.SetPointSize(16)
+	// } else {
+	// 	//font.SetFamily("Serif Regular")
+	// 	font.SetPointSize(12)
+	// }
+
+	// fm := gui.NewQFontMetrics(font)
+	// return fm.BoundingRect2("宽W").Width()
+	return 24
 }
 
 func (s *myWindow) OpenNewWindow(parent *myWindow, id int) {
 	s.key = parent.key
+	s.curDiary = new(diaryPointer)
 	s.curDiary.Id = id
 	s.db = parent.db
 
@@ -489,21 +545,19 @@ func (s *myWindow) OpenNewWindow(parent *myWindow, id int) {
 	s.window.SetMinimumSize2(800, 600)
 	s.window.SetWindowIcon(gui.NewQIcon5(":/qml/icons/Sd.png"))
 
-	grid := widgets.NewQGridLayout2()
+	grid := newGridLayout2()
 
 	frame := widgets.NewQFrame(s.window, core.Qt__Widget)
 
 	s.window.SetCentralWidget(frame)
 
-	editor := s.createEditor()
+	charW := s.charWidth()
+	editor := s.createEditor(charW)
 	s.window.SetMinimumWidth(s.editor.Width() + 100)
 
 	grid.AddWidget3(editor, 0, 0, 1, 1, 0)
 
-	comboBox := s.setupComboAttachs()
-	grid.AddLayout(comboBox, 1, 0, 0)
-
-	grid.SetAlign(core.Qt__AlignTop)
+	//grid.SetAlign(core.Qt__AlignTop)
 
 	s.setToolBar()
 
@@ -511,14 +565,14 @@ func (s *myWindow) OpenNewWindow(parent *myWindow, id int) {
 
 	s.exportEnc.SetEnabled(true)
 	s.exportPdf.SetEnabled(true)
+	s.exportOdt.SetEnabled(true)
 	s.importEnc.SetDisabled(true)
 	s.newDiary.SetDisabled(true)
 	s.renDiary.SetDisabled(true)
 	s.modifyPwd.SetDisabled(true)
 
-	s.saveDiary.ConnectTriggered(func(b bool) {
-		s.saveDiaryAlone()
-	})
+	//s.setStandaloneFuncs()
+	s.setEditorFuncs()
 
 	frame.SetLayout(grid)
 
@@ -568,6 +622,7 @@ func (s *myWindow) saveDiaryAlone() {
 	s.db.UpdateDiaryTitle(s.curDiary.Id, title)
 
 	s.setStatusBar(T("Save Diary") + fmt.Sprintf(" %s(%s)", title, filename))
+	s.editor.Document().SetModified(false)
 }
 
 func (s *myWindow) searchFromDb(kw string) {
@@ -581,8 +636,9 @@ func (s *myWindow) searchFromDb(kw string) {
 		s.setStatusBar(err.Error())
 		return
 	}
-	s.modelFind.Clear()
-	s.modelFind.SetHorizontalHeaderLabels([]string{T("Result List")})
+
+	s.clearModelFind()
+
 	var ym string
 	var r, c int
 	for _, diary := range diaryList {
@@ -640,4 +696,209 @@ func (s *myWindow) setTreeFindFuncs() {
 		}
 		OpenDiaryNewWindow(s, id)
 	})
+}
+
+func (s *myWindow) findText() {
+	if s.searchInput != nil {
+		cursor := s.editor.TextCursor()
+		s.searchInput.SetText(cursor.Selection().ToPlainText())
+		return
+	}
+	dlg := widgets.NewQDialog(s.window, core.Qt__Dialog)
+	dlg.SetMinimumWidth(s.editor.Width() / 2)
+
+	dlg.SetWindowTitle(T("Text Search"))
+
+	grid := newGridLayout(dlg)
+
+	word := widgets.NewQLineEdit(dlg)
+	word.SetPlaceholderText(T("Words to search."))
+	grid.AddWidget3(word, 0, 0, 1, 2, 0)
+	s.searchInput = word
+	cursor := s.editor.TextCursor()
+	s.searchInput.SetText(cursor.Selection().ToPlainText())
+
+	backBtn := widgets.NewQPushButton2(T("Last"), dlg)
+	grid.AddWidget2(backBtn, 1, 0, 0)
+
+	nextBtn := widgets.NewQPushButton2(T("Next"), dlg)
+	grid.AddWidget2(nextBtn, 1, 1, 0)
+
+	dlg.SetLayout(grid)
+
+	backBtn.ConnectClicked(func(b bool) {
+		kw := strings.TrimSpace(word.Text())
+		if len(kw) == 0 {
+			return
+		}
+		cursor := s.editor.TextCursor()
+		if len(cursor.Selection().ToPlainText()) > 0 {
+			cursor.SetPosition(cursor.SelectionStart(), gui.QTextCursor__MoveAnchor)
+			s.editor.SetTextCursor(cursor)
+		}
+		s.editor.Find(kw, gui.QTextDocument__FindBackward)
+	})
+
+	nextBtn.ConnectClicked(func(b bool) {
+		kw := strings.TrimSpace(word.Text())
+		if len(kw) == 0 {
+			return
+		}
+		cursor := s.editor.TextCursor()
+		if len(cursor.Selection().ToPlainText()) > 0 {
+			cursor.SetPosition(cursor.SelectionEnd(), gui.QTextCursor__MoveAnchor)
+			s.editor.SetTextCursor(cursor)
+		}
+		s.editor.Find(kw, 0)
+	})
+
+	dlg.ConnectCloseEvent(func(e *gui.QCloseEvent) {
+		dlg.Destroy(true, true)
+		s.searchInput = nil
+	})
+
+	dlg.Show()
+}
+
+func (s *myWindow) replaceText() {
+	if s.replaceInput != nil {
+		cursor := s.editor.TextCursor()
+		s.replaceInput.SetText(cursor.Selection().ToPlainText())
+		return
+	}
+
+	dlg := widgets.NewQDialog(s.window, core.Qt__Dialog)
+	dlg.SetMinimumWidth(s.editor.Width() / 2)
+
+	dlg.SetWindowTitle(T("Text Replace"))
+
+	grid := newGridLayout(dlg)
+
+	wordOld := widgets.NewQLineEdit(dlg)
+	wordOld.SetPlaceholderText(T("Old Text."))
+	wordOld.SetToolTip(T("Old Text."))
+	grid.AddWidget3(wordOld, 0, 0, 1, 3, 0)
+	s.replaceInput = wordOld
+	cursor := s.editor.TextCursor()
+	s.replaceInput.SetText(cursor.Selection().ToPlainText())
+
+	wordNew := widgets.NewQLineEdit(dlg)
+	wordNew.SetPlaceholderText(T("New Text."))
+	wordNew.SetToolTip(T("New Text."))
+	grid.AddWidget3(wordNew, 1, 0, 1, 3, 0)
+
+	backBtn := widgets.NewQPushButton2(T("Last"), dlg)
+	grid.AddWidget2(backBtn, 2, 0, 0)
+
+	nextBtn := widgets.NewQPushButton2(T("Next"), dlg)
+	grid.AddWidget2(nextBtn, 2, 1, 0)
+
+	allBtn := widgets.NewQPushButton2(T("All"), dlg)
+	grid.AddWidget2(allBtn, 2, 2, 0)
+
+	dlg.SetLayout(grid)
+
+	backBtn.ConnectClicked(func(b bool) {
+		word0 := wordOld.Text()
+		word1 := wordNew.Text()
+		if len(word0) == 0 {
+			return
+		}
+		cursor := s.editor.TextCursor()
+		if cursor.Selection().ToPlainText() == word0 {
+			cursor.RemoveSelectedText()
+			cursor.InsertText(word1)
+
+			cursor.SetPosition(cursor.Position()-len(word1), gui.QTextCursor__MoveAnchor)
+			s.editor.SetTextCursor(cursor)
+		}
+
+		s.editor.Find(word0, gui.QTextDocument__FindBackward)
+	})
+
+	nextBtn.ConnectClicked(func(b bool) {
+		word0 := wordOld.Text()
+		word1 := wordNew.Text()
+		if len(word0) == 0 {
+			return
+		}
+		cursor := s.editor.TextCursor()
+
+		if cursor.Selection().ToPlainText() == word0 {
+			cursor.RemoveSelectedText()
+			cursor.InsertText(word1)
+		}
+		s.editor.Find(word0, 0)
+	})
+
+	allBtn.ConnectClicked(func(b bool) {
+		word0 := wordOld.Text()
+		if len(word0) == 0 {
+			return
+		}
+		text := s.editor.ToPlainText()
+		n := strings.Count(strings.ToLower(text), strings.ToLower(word0))
+
+		cursor := s.editor.TextCursor()
+		cursor.SetPosition(0, gui.QTextCursor__MoveAnchor)
+		s.editor.SetTextCursor(cursor)
+
+		for i := 0; i < n+1; i++ {
+			nextBtn.Clicked(true)
+		}
+	})
+
+	dlg.ConnectCloseEvent(func(e *gui.QCloseEvent) {
+		dlg.Destroy(true, true)
+		s.replaceInput = nil
+	})
+
+	dlg.Show()
+}
+
+func (s *myWindow) pasteText() {
+	board := gui.QGuiApplication_Clipboard()
+	text := board.Text(gui.QClipboard__Clipboard)
+	cursor := s.editor.TextCursor()
+	cursor.InsertText(text)
+}
+
+func (s *myWindow) changeLineMargin() {
+	cursor := s.editor.TextCursor()
+	if !cursor.HasSelection() {
+		cursor.Select(gui.QTextCursor__LineUnderCursor)
+	}
+	bfmt := cursor.BlockFormat()
+	margin := bfmt.TopMargin()
+
+	dlg := widgets.NewQDialog(s.window, core.Qt__Dialog)
+	dlg.SetWindowTitle(T("Top Margin"))
+	dlg.SetMinimumWidth(s.charWidth() * 10)
+	layout := widgets.NewQHBoxLayout()
+
+	label := widgets.NewQLabel2(T("Top Margin")+fmt.Sprintf(":%.0f", margin), dlg, core.Qt__Widget)
+	layout.AddWidget(label, 1, 0)
+
+	addBtn := widgets.NewQPushButton2("+", dlg)
+	addBtn.SetFixedWidth(s.charWidth())
+	layout.AddWidget(addBtn, 1, 0)
+	addBtn.ConnectClicked(func(b bool) {
+		margin += 1.0
+		bfmt.SetTopMargin(margin)
+		cursor.SetBlockFormat(bfmt)
+		label.SetText(T("Top Margin") + fmt.Sprintf(":%.0f", margin))
+	})
+
+	degreeBtn := widgets.NewQPushButton2("-", dlg)
+	degreeBtn.SetFixedWidth(s.charWidth())
+	layout.AddWidget(degreeBtn, 1, 0)
+	degreeBtn.ConnectClicked(func(b bool) {
+		margin -= 1.0
+		bfmt.SetTopMargin(margin)
+		cursor.SetBlockFormat(bfmt)
+		label.SetText(T("Top Margin") + fmt.Sprintf(":%.0f", margin))
+	})
+
+	dlg.SetLayout(layout)
+	dlg.Show()
 }

@@ -2,8 +2,12 @@ secret-diary
 /deploy
 moc*
 rcc*
-/testdata
 messages.log
 linux_launcher
 setup
 /deb
+README.md
+1
+2
+3
+*.syso
